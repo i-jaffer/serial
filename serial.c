@@ -141,6 +141,9 @@ int serial_set_attribute(int fd, serial_attr_struct serial_attr)
                 break;
         }
 
+        /* 取消将回车映射为回车换行 */
+        opt.c_oflag &= ~OCRNL; 
+
         ret = tcflush(fd, TCIOFLUSH); /* 清空缓存区 */
         if(ret == -1)
                 perror("tcflush error in serial set attribute");

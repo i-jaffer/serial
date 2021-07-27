@@ -11,7 +11,7 @@ int main()
 {
         int ret = 0;
         int fd;
-        char buf[BUFSIZ];
+        char buf[BUFSIZ] = {0};
         fd = open("/dev/ttyUSB0", O_RDWR|O_NOCTTY);
         if(fd == -1) {
                 perror("open ttyusb0 error!");
@@ -25,8 +25,8 @@ int main()
         serial_attr.echo_switch = ECHO_CLOSE;
 
         serial_mode_struct serial_mode;
-        serial_mode.vtime_100ms = 30;
-        serial_mode.vmin = 5;
+        serial_mode.vtime_100ms = 0;
+        serial_mode.vmin = 1;
 
         serial_set_speed(fd, 115200);
         serial_set_attribute(fd, serial_attr);
