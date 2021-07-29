@@ -16,10 +16,15 @@ int serial_set_speed(int fd, int speed)
 {
         int speed_arr[] = { B50, B75, B110, B134, B150, B200,
                 B300, B600, B1200, B1800, B2400, B4800, B9600,
-                B19200, B38400, B57600, B115200, B230400};
+                B19200, B38400, B57600, B115200, B230400,
+                B460800, B500000, B576000, B921600, B1000000,
+                B1152000, B1500000, B2000000, B2500000, B3000000,
+                B3500000, B4000000};
         int name_arr[] = {50, 75, 110, 134, 150, 200, 300, 600,
                 1200, 1800, 2400, 4800, 9600, 19200, 38400, 57600,
-                115200, 230400};
+                115200, 230400, 460800, 500000, 576000, 921600,
+                1000000, 1152000, 1500000, 2000000, 2500000, 3000000,
+                3500000, 4000000};
         int ret = 0;
         struct termios opt;
         memset(&opt, 0, sizeof(opt));
@@ -141,16 +146,17 @@ int serial_set_attribute(int fd, serial_attr_struct serial_attr)
                 break;
         }
 
-        /* 取消将回车映射为回车换行 */
-        opt.c_oflag &= ~OCRNL; 
+        /* 禁用输出处理 */
+        opt.c_oflag &= ~OPOST;
+
+        ret = tcsetattr(fd, TCSANOW, &opt);
+        if(ret == -1)
+                perror("tcssetattr error in serial set attribute");
 
         ret = tcflush(fd, TCIOFLUSH); /* 清空缓存区 */
         if(ret == -1)
                 perror("tcflush error in serial set attribute");
         
-        ret = tcsetattr(fd, TCSANOW, &opt);
-        if(ret == -1)
-                perror("tcssetattr error in serial set attribute");
 out:
         return ret;
 }
