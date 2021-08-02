@@ -11,7 +11,7 @@ int main()
 {
         int ret = 0;
         int fd;
-        char buf[BUFSIZ] = {0};
+        unsigned char buf[BUFSIZ] = {0};
         fd = open("/dev/ttyUSB0", O_RDWR|O_NOCTTY);
         if(fd == -1) {
                 perror("open ttyusb0 error!");
@@ -28,11 +28,13 @@ int main()
         serial_mode.vtime_100ms = 0;
         serial_mode.vmin = 1;
 
-        serial_set_speed(fd, 115200);
+        serial_set_speed(fd, 576000);
         serial_set_attribute(fd, serial_attr);
         serial_set_mode(fd, serial_mode);
 
+        write(fd, "hello", 6);
 #if 1
+        int total_len = 0;
         while(1) {
                 ret = read(fd, buf, sizeof(buf));
                 if(ret == -1) {
@@ -40,8 +42,13 @@ int main()
                         exit(-1);
                 }
                 else {
-                        printf("read num:%d\n", ret);
-                        printf("buf:%s\n", buf);
+                        for(int i=0; i<ret; i++) {
+                                if(total_len % 10 == 0)
+                                        printf("\n total = %d\n", total_len);
+
+                                printf(" %x", buf[i]);
+                                total_len ++;
+                        }
                 }
                 memset(buf, 0, sizeof(buf));
         }
