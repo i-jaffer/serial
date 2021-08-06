@@ -153,16 +153,6 @@ int serial_set_attribute(int fd, serial_attr_struct serial_attr)
         opt.c_iflag &= ~ICRNL;  /* 将回车转化为新行输入(除非设置了IGNCR) */
         opt.c_iflag &= ~IXON;   /* 关闭XON/XOFF流控制 */
 
-#if 0
-        opt.c_cflag &= ~HUPCL;
-        opt.c_lflag &= ~IEXTEN; /* 取消实现定义的输入处理 */
-        opt.c_lflag &= ~ECHOK;  /*  */
-        opt.c_lflag &= ~ECHOCTL;
-        opt.c_lflag &= ~ECHOKE;
-        opt.c_lflag &= ~ISIG;
-        //opt.c_oflag &= ~ONLCR;
-#endif
-
         ret = tcflush(fd, TCIOFLUSH); /* 清空缓存区 */
         if(ret == -1)
                 perror("tcflush error in serial set attribute");
