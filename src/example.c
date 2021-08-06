@@ -38,8 +38,24 @@ int serial_init(int fd)
                 goto out;
         }
 
-        write(fd, "hello", 6);
 out:
+        return ret;
+}
+
+int output_check(int fd)                                                                
+{
+        int ret = 0;
+        char buf[256] = {0};
+
+        for(int i=0; i<256; i++)
+                buf[i] = i;
+
+        ret = write(fd, buf, 256);
+        if(ret == -1) {
+                perror("write error");
+                goto err;
+        }
+err:
         return ret;
 }
 
@@ -54,6 +70,7 @@ int main()
                 exit(-1);
         }
         serial_init(fd);
+        output_check(fd);
 
         while (1) {
                 ret = read(fd, buf, sizeof(buf));
