@@ -54,6 +54,8 @@ int output_check(int fd)
         if(ret == -1) {
                 perror("write error");
                 goto err;
+        } else {
+                printf("write ok!\n");
         }
 err:
         return ret;
