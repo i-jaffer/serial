@@ -146,17 +146,20 @@ int serial_set_attribute(int fd, serial_attr_struct serial_attr)
                 break;
         }
 
-        /* 禁用输出处理 */
-        opt.c_oflag &= ~OPOST;
-
-        ret = tcsetattr(fd, TCSANOW, &opt);
-        if(ret == -1)
-                perror("tcssetattr error in serial set attribute");
+        opt.c_oflag &= ~OPOST;  /* 禁用输出处理 */
+        opt.c_lflag &= ~ICANON; /* 设置为非规范模式 */
+        opt.c_lflag &= ~ISIG;   /* 屏蔽特殊字符 */
+        opt.c_iflag |= IGNBRK;  /* 忽略输入的Break条件 */
+        opt.c_iflag &= ~ICRNL;  /* 将回车转化为新行输入(除非设置了IGNCR) */
+        opt.c_iflag &= ~IXON;   /* 关闭XON/XOFF流控制 */
 
         ret = tcflush(fd, TCIOFLUSH); /* 清空缓存区 */
         if(ret == -1)
                 perror("tcflush error in serial set attribute");
         
+        ret = tcsetattr(fd, TCSANOW, &opt);
+        if(ret == -1)
+                perror("tcssetattr error in serial set attribute");
 out:
         return ret;
 }
