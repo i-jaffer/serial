@@ -18,7 +18,7 @@ $(DIR_OBJ)/%.o : $(DIR_SRC)/%.c
 	$(CC) -c $< $(CFLAGS) -o $@
 
 .PHONY : lib
-lib : $(DIR_LIB)/libserial.so $(DIR_LIB)/libserial_arm.so $(DIR_LIB)/libserial_arm64.so
+lib : $(DIR_LIB)/libserial.so $(DIR_LIB)/libserial_arm.so $(DIR_LIB)/libserial_arm64.so $(DIR_LIB)/libserial.a
 
 $(DIR_LIB)/libserial.so : $(DIR_SRC)/serial.c
 	gcc $< $(CFLAGS) -shared -fPIC -o $@
@@ -26,6 +26,8 @@ $(DIR_LIB)/libserial_arm.so : $(DIR_SRC)/serial.c
 	arm-linux-gnueabihf-gcc $< $(CFLAGS) -std=c99 -shared -fPIC -o $@
 $(DIR_LIB)/libserial_arm64.so : $(DIR_SRC)/serial.c
 	aarch64-linux-gnu-gcc $< $(CFLAGS) -shared -fPIC -o $@
+$(DIR_LIB)/libserial.a : $(DIR_OBJ)/serial.o
+	ar crv $@ $<
 
 .PHONY : clean
 clean :
